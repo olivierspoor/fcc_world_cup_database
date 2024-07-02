@@ -8,3 +8,38 @@ else
 fi
 
 # Do not change code above this line. Use the PSQL variable above to query your database.
+cat games.csv | while IFS="," read YEAR ROUND WINNER OPPONENT WINNER_GOALS OPPONENT_GOALS
+do
+  if [[ $WINNER != winner ]]
+    then
+    # get team id
+    TEAM_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$WINNER'")
+
+    # if not found
+    if [[ -z $TEAM_ID ]]
+      then 
+      # insert winner
+      INSERT_TEAM_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$WINNER')")
+      if [[ $INSERT_TEAM_RESULT == 'INSERT 0 1' ]]
+        then
+          echo Inserted into teams, $WINNER
+      fi
+    fi
+  fi
+  if [[ $OPPONENT != opponent ]]
+    then
+    # get team id
+    TEAM_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$OPPONENT'")
+
+    # if not found
+    if [[ -z $TEAM_ID ]]
+      then 
+      # insert winner
+      INSERT_TEAM_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$OPPONENT')")
+      if [[ $INSERT_TEAM_RESULT == 'INSERT 0 1' ]]
+        then
+          echo Inserted into teams, $OPPONENT
+      fi
+    fi
+  fi
+done 
